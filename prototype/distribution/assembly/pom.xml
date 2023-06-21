@@ -126,6 +126,12 @@
                   <type>zip</type>
                   <classifier>osgifeaturerepo</classifier>
                 </artifactItem>
+                <artifactItem>
+                  <groupId>org.eclipse.sensinact.gateway.distribution</groupId>
+                  <artifactId>webconsole</artifactId>
+                  <version>0.0.2-SNAPSHOT</version>
+                  <type>zip</type>
+                </artifactItem>
               </artifactItems>
             </configuration>
           </execution>

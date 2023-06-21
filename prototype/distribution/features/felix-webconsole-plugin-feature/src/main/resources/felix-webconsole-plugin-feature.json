@@ -1,0 +1,6 @@
+{
+  "id":"org.eclipse.sensinact.gateway.distribution.features:felix-webconsole-plugin-feature:osgifeature:0.0.2-SNAPSHOT",
+  "bundles":[
+    { "id": "org.apache.felix:org.apache.felix.webconsole:4.6.0" }
+  ]
+}

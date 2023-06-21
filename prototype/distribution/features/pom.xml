@@ -36,6 +36,7 @@
     <module>virtual-temperature-sensor-feature</module>
     <module>timescale-history-provider-feature</module>
     <module>northbound-oidc-authenticator-feature</module>
+    <module>felix-webconsole-plugin-feature</module>
   </modules>
 
   <properties>
