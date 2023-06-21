@@ -26,6 +26,7 @@
   <modules>
     <module>test-utils</module>
     <module>launcher</module>
+    <module>webconsole</module>
     <module>features</module>
     <module>assembly</module>
   </modules>
