@@ -54,6 +54,10 @@
 			<artifactId>org.apache.felix.webconsole</artifactId>
 		</dependency>
 		<dependency>
+        	<groupId>commons-fileupload</groupId>
+  			<artifactId>commons-fileupload</artifactId>
+  		</dependency>
+  		<dependency>
 			<groupId>org.apache.johnzon</groupId>
 			<artifactId>johnzon-core</artifactId>
 		</dependency>

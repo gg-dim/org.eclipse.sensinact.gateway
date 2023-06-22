@@ -5,8 +5,8 @@ import static org.apache.felix.webconsole.WebConsoleConstants.PLUGIN_LABEL;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Path;
+import java.util.List;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -17,6 +17,7 @@ import javax.servlet.http.Part;
 
 import org.apache.felix.webconsole.AbstractWebConsolePlugin;
 import org.eclipse.sensinact.gateway.launcher.FeatureLauncher;
+import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -27,12 +28,12 @@ import org.slf4j.LoggerFactory;
 		PLUGIN_CATEGORY + "=" + FeatureLauncherPlugin.CATEGORY, })
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 public class FeatureLauncherPlugin extends AbstractWebConsolePlugin {
-	
-    private static final Logger LOGGER = LoggerFactory.getLogger(FeatureLauncherPlugin.class);
-    private static final long serialVersionUID = 1L;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(FeatureLauncherPlugin.class);
+	private static final long serialVersionUID = 1L;
 
 	static final String CATEGORY = "Sensinact";
-	static final String LABEL = "Feature File";
+	static final String LABEL = "Feature";
 
 	@Reference
 	FeatureLauncher launcher;
@@ -45,18 +46,23 @@ public class FeatureLauncherPlugin extends AbstractWebConsolePlugin {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		res.setContentType("text/html");
-		PrintWriter writer = res.getWriter();
 		Path uploadPath = prepareUploadDir();
+		StringBuilder sb = new StringBuilder();
 		for (Part part : req.getParts()) {
 			String fileName = part.getSubmittedFileName();
-			part.write(uploadPath + File.separator + fileName);
-			StringBuilder sb = new StringBuilder();
-			sb.append("<h1>Feature Launcher</h1>");
-			sb.append(fileName);
-			sb.append(" successfully uploaded.");
-			writer.println(sb.toString());
-			launcher.loadFeature(fileName);
+			if (!fileName.isBlank()) {
+				part.write(uploadPath + File.separator + fileName);
+				sb.append(fileName);
+				try {
+					launcher.addOrUpdate(fileName);
+					sb.append(" successfully installed.");
+				} catch (ConfigurationException e) {
+					sb.append(" installation failed:");
+					sb.append(e.getMessage());
+				}
+			}
 		}
+		res.sendRedirect(LABEL + "?result=" + sb.toString());
 	}
 
 	private Path prepareUploadDir() {
@@ -71,11 +77,25 @@ public class FeatureLauncherPlugin extends AbstractWebConsolePlugin {
 	@Override
 	protected void renderContent(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		res.setContentType("text/html");
-		res.getWriter()
-				.println("<h1>Upload Feature File</h1>"
-						+ "<form method=\"post\" action=\"\" enctype=\"multipart/form-data\">"
-						+ "Choose a file: <input type=\"file\" name=\"multiPartServlet\" />"
-						+ "<input type=\"submit\" value=\"Upload\" /></form>");
+		StringBuilder sb = new StringBuilder();
+		sb.append("<h2>Upload Feature</h2>");
+		sb.append("<form method=\"post\" action=\"\" enctype=\"multipart/form-data\">");
+		sb.append("Choose a file: <input type=\"file\" name=\"multiPartServlet\" />");
+		sb.append("<input type=\"submit\" value=\"Upload\" /></form>");
+		appendInstalledFeatures(sb);
+		String result = req.getParameter("result");
+		if (result != null && !result.isBlank()) {
+			sb.append("<h3>Result:</h3><p></br>").append(result).append("</p>");
+		}
+
+		res.getWriter().println(sb.toString());
+	}
+
+	private void appendInstalledFeatures(StringBuilder sb) {
+		sb.append("<h3>Installed features:</h3><ul>");
+		List<String> progress = launcher.getInstalledFeatures();
+		progress.forEach(feature -> sb.append("<li>").append(feature).append("</li>"));
+		sb.append("</ul>");
 	}
 
 	@Override

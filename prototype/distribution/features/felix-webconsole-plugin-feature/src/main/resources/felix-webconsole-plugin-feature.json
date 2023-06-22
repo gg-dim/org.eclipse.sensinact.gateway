@@ -1,6 +1,11 @@
 {
   "id":"org.eclipse.sensinact.gateway.distribution.features:felix-webconsole-plugin-feature:osgifeature:0.0.2-SNAPSHOT",
   "bundles":[
-    { "id": "org.apache.felix:org.apache.felix.webconsole:4.6.0" }
+    { "id": "org.apache.felix:org.apache.felix.webconsole:4.6.0" },
+    { "id": "org.apache.felix:org.apache.felix.http.jetty:5.0.0" },
+    { "id": "org.apache.felix:org.apache.felix.http.servlet-api:2.1.0" },
+    { "id": "commons-fileupload:commons-fileupload:1.5" },
+    { "id": "commons-io:commons-io:2.11.0" },
+    { "id": "org.eclipse.sensinact.gateway.distribution:webconsole:0.0.2-SNAPSHOT" }
   ]
 }
