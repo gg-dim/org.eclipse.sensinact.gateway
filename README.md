@@ -63,3 +63,4 @@ Will enable the `generate-dependencies-file` profile and automatically update th
 * The `ci-build` profile enables strict verification of test resolutions to ensure that the build is running as expected.
 
 Other profiles can be found in the parent pom.xml file.
+
